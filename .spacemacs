@@ -7,7 +7,7 @@
   (setq-default
    ;; List of additional paths where to look for configuration layers.
    ;; Paths must have a trailing slash (ie. `~/.mycontribs/')
-   dotspacemacs-configuration-layer-path '()
+   dotspacemacs-configuration-layer-path '("~/.emacs.d/my-layer/")
    ;; List of configuration layers to load. If it is the symbol `all' instead
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
@@ -34,7 +34,11 @@
      javascrpt
      c-c++
      lua
-     ;; syntax-checking
+     syntax-checking
+
+     ;; my layer definition
+     my-better-defaults
+     my-misc
      )
    ;; List of additional packages that will be installed wihout being
    ;; wrapped in a layer. If you need some configuration for these
@@ -58,17 +62,6 @@
    ;; the list `dotspacemacs-configuration-layers'
    dotspacemacs-delete-orphan-packages t))
 
-(when (eq system-type 'darwin) ;; mac specific settings
-  (setq mac-command-modifier 'meta)
-  (setq mac-option-modifier 'none)
-  (setq default-input-method "MacOSX")
-  ;; Make mouse wheel / trackpad scrolling less jerky
-  (setq mouse-wheel-scroll-amount '(1
-                                    ((shift) . 5)
-                                    ((control))))
-  )
-
-
 (defun dotspacemacs/init ()
   "Initialization function.
 This function is called at the very startup of Spacemacs initialization
@@ -82,7 +75,7 @@ before layers configuration."
    ;; If non nil output loading progress in `*Messages*' buffer.
    dotspacemacs-verbose-loading nil
    ;; Specify the startup banner. Default value is `official', it displays
-   ;; the official spacemacs logo. An integer value is the index of text
+   ;; the official spacemacs logo.emacs An integer value is the index of text
    ;; banner, `random' chooses a random text banner in `core/banners'
    ;; directory. A string value must be a path to an image format supported
    ;; by your Emacs build.
@@ -181,6 +174,31 @@ before layers configuration."
   "Configuration function.
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
+  (when (eq system-type 'darwin) ;; mac specific settings
+    (setq mac-command-modifier 'meta)
+    (setq mac-option-modifier 'none)
+    (setq default-input-method "MacOSX")
+    ;; Make mouse wheel / trackpad scrolling less jerky
+    (setq mouse-wheel-scroll-amount '(1
+                                      ((shift) . 5)
+                                      ((control))))
+    )
+
+  ;; add helm everywhere
+  (global-set-key (kbd "M-t") 'helm-ls-git-ls)
+  (global-set-key (kbd "M-x") 'helm-M-x)
+  (global-set-key (kbd "M-y") 'helm-show-kill-ring)
+  (global-set-key (kbd "C-x b") 'helm-mini)
+  (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
+  (global-set-key (kbd "C-x C-f") 'helm-find-files)
+  (global-set-key (kbd "C-h f") 'helm-apropos)
+  (global-set-key (kbd "C-h r") 'helm-info-emacs)
+  (global-set-key (kbd "C-h C-l") 'helm-locate-library)
+  (global-set-key (kbd "C-c f") 'helm-recentf)
+  (custom-set-variables
+   '(helm-ag-base-command "ag --nocolor --nogroup --smart-case")
+   '(helm-ag-command-option "--all-text")
+   '(helm-ag-insert-at-point 'symbol))
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
