@@ -199,6 +199,53 @@ layers configuration."
    '(helm-ag-base-command "ag --nocolor --nogroup --smart-case")
    '(helm-ag-command-option "--all-text")
    '(helm-ag-insert-at-point 'symbol))
+
+
+  ;; Define indention key
+;;; It's kind of sad this doesn't exist normally...
+  (defun indent-rigidly-n (n)
+    "Indent the region, or otherwise the current line, by N spaces."
+    (let* ((use-region (and transient-mark-mode mark-active))
+           (rstart (if use-region (region-beginning) (point-at-bol)))
+           (rend   (if use-region (region-end)       (point-at-eol)))
+           (deactivate-mark "irrelevant")) ; avoid deactivating mark
+      (indent-rigidly rstart rend n)))
+  (defun indent-rigidly-4 ()
+    "Indent the region, or otherwise the current line, by 4 spaces."
+    (interactive)
+    (indent-rigidly-n 4))
+  (defun outdent-rigidly-4 ()
+    "Indent the region, or otherwise the current line, by -4 spaces."
+    (interactive)
+    (indent-rigidly-n -4))
+
+  (global-set-key (kbd "M-]") 'indent-rigidly-4)
+  (global-set-key (kbd "M-[") 'outdent-rigidly-4)
+
+
+  ;; 有关大小写p的区别.
+  ;; 小写的p, 总是将任意的参数转换为一个有意义的数字.即使不指定参数, 即参数为nil, 默认代表1.
+  ;; 大写的p, 除非显式的通过C-u或其他方式指定参数, 否则所有的nil, 当作无参数处理.
+  (defun window-move-up (&optional arg)
+    "Current window move-up 3 lines."
+    (interactive "P")
+    (if (region-active-p)
+        (next-line nil)
+      (if arg
+          (scroll-up arg)
+        (scroll-up 3))))
+  (defun window-move-down (&optional arg)
+    "Current window move-down 3 lines."
+    (interactive "P")
+    (if (region-active-p)
+        (previous-line nil)
+      (if arg
+          (scroll-down arg)
+        (scroll-down 3))))
+
+  (global-set-key (kbd "M-p") 'window-move-down) ;光标位置不变，窗口向下移动两行
+  (global-set-key (kbd "M-n") 'window-move-up) ;光标位置不变，窗口向上移动四行
+
 )
 
 ;; Do not write anything past this comment. This is where Emacs will
