@@ -19,8 +19,6 @@
      ;; ----------------------------------------------------------------
      auto-completion
      better-defaults
-     (colors :variables
-             colors-enable-nyan-cat-progress-bar t)
      emacs-lisp
      (git :variables
           git-magit-status-fullscreen t
@@ -28,6 +26,7 @@
           git-gutter-use-fringe t)
      markdown
      org
+     semantic
      shell
      python
      html
@@ -37,8 +36,7 @@
      syntax-checking
 
      ;; my layer definition
-     my-better-defaults
-     my-misc
+     zilongshanren
      )
    ;; List of additional packages that will be installed wihout being
    ;; wrapped in a layer. If you need some configuration for these
@@ -174,9 +172,25 @@ before layers configuration."
   "Configuration function.
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
+
+  (setq powerline-default-separator 'arrow)
+  (menu-bar-mode t)
+  (setq vc-follow-symlinks t)
+  ;; 设置中文等宽字体
+  
+  (setq default-input-method 'eim-wb)
+  (defun set-font (english chinese english-size chinese-size)
+    (set-face-attribute 'default nil :font
+                        (format   "%s:pixelsize=%d"  english english-size))
+    (dolist (charset '(kana han symbol cjk-misc bopomofo))
+      (set-fontset-font (frame-parameter nil 'font) charset
+                        (font-spec :family chinese :size chinese-size))))
+
+  (set-font   "Source Code Pro" "Hiragino Sans GB" 14 16)
+
   (when (eq system-type 'darwin) ;; mac specific settings
     (setq mac-command-modifier 'meta)
-    (setq mac-option-modifier 'none)
+    (setq mac-option-modifier 'super)
     (setq default-input-method "MacOSX")
     ;; Make mouse wheel / trackpad scrolling less jerky
     (setq mouse-wheel-scroll-amount '(1
@@ -195,6 +209,31 @@ layers configuration."
   (global-set-key (kbd "C-h r") 'helm-info-emacs)
   (global-set-key (kbd "C-h C-l") 'helm-locate-library)
   (global-set-key (kbd "C-c f") 'helm-recentf)
+  (global-set-key (kbd "C-s") 'swiper)
+
+  (eval-after-load 'company
+    '(progn
+       (setq company-echo-delay 0)
+       (setq company-idle-delay 0.08)
+       (setq company-auto-complete nil)
+       (setq company-show-numbers t)
+       (setq company-begin-commands '(self-insert-command))
+       (setq company-tooltip-limit 10)
+       (setq company-minimum-prefix-length 1)
+       (let ((map company-active-map))
+         (define-key map (kbd "C-d") 'company-show-doc-buffer)
+         (define-key map (kbd "C-n") 'company-select-next)
+         (define-key map (kbd "C-p") 'company-select-previous)
+         (define-key map (kbd "C-l") 'company-complete-selection))
+       ))
+
+  (eval-after-load 'company
+    '(progn
+       (let ((map company-active-map))
+         (define-key map (kbd "C-n") 'company-select-next)
+         (define-key map (kbd "C-p") 'company-select-previous)))
+    )
+
   (custom-set-variables
    '(helm-ag-base-command "ag --nocolor --nogroup --smart-case")
    '(helm-ag-command-option "--all-text")
@@ -244,9 +283,9 @@ layers configuration."
         (scroll-down 3))))
 
   (global-set-key (kbd "M-p") 'window-move-down) ;光标位置不变，窗口向下移动两行
-  (global-set-key (kbd "M-n") 'window-move-up) ;光标位置不变，窗口向上移动四行
+  (global-set-key (kbd "M-n") 'window-move-up)   ;光标位置不变，窗口向上移动四行
 
-)
+  )
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
