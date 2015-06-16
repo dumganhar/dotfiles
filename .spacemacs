@@ -283,9 +283,28 @@ layers configuration."
         (scroll-down 3))))
 
   (global-set-key (kbd "M-p") 'window-move-down) ;光标位置不变，窗口向下移动两行
-  (global-set-key (kbd "M-n") 'window-move-up)   ;光标位置不变，窗口向上移动四行
+  (global-set-key (kbd "M-n") 'window-move-up)
+
+  (eval-after-load 'anaconda-mode
+    '(progn
+       (define-key anaconda-mode-map (kbd "M-.") 'anaconda-mode-goto-definitions)
+       (define-key anaconda-mode-map (kbd "M-,") 'anaconda-nav-pop-marker)
+       (define-key anaconda-mode-map (kbd "C-c d") 'anaconda-mode-view-doc)
+       ))
+
+  ;; Comment and Uncomment
+  (defun comment-or-uncomment-line-or-region ()
+    "Comments or uncomments the current line or region."
+    (interactive)
+    (if (region-active-p)
+        (comment-or-uncomment-region (region-beginning) (region-end))
+      (comment-or-uncomment-region (line-beginning-position) (line-end-position))
+      )
+    )
+  (global-set-key (kbd "M-/") 'comment-or-uncomment-line-or-region)
 
   )
+
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
@@ -299,13 +318,19 @@ layers configuration."
  '(ahs-idle-interval 0.25)
  '(ahs-idle-timer 0 t)
  '(ahs-inhibit-face-list nil)
+ '(helm-ag-base-command "ag --nocolor --nogroup --smart-case")
+ '(helm-ag-command-option "--all-text")
+ '(helm-ag-insert-at-point (quote symbol))
  '(ring-bell-function (quote ignore) t)
  '(safe-local-variable-values
    (quote
-    ((eval setenv "PYTHONPATH" "/Users/james/Project/cocos-runtime/tools/common")))))
+    ((eval setenv "PYTHONPATH" "../common")
+     ))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((((class color) (min-colors 257)) (:foreground "#F8F8F2" :background "#272822")) (((class color) (min-colors 89)) (:foreground "#F5F5F5" :background "#1B1E1C"))))
+ '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
+ '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
