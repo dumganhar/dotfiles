@@ -30,7 +30,7 @@
      shell
      python
      html
-     javascrpt
+     javascript
      c-c++
      lua
      syntax-checking
